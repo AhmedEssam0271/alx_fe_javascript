@@ -199,12 +199,19 @@ function showRandomQuote() {
 }
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 
+let createAddQuoteForm = document.createElement("form");
+document.body.appendChild(createAddQuoteForm);
+document.createAddQuoteForm.appendChild(
+document.getElementById("createAddQuoteFormChilde")
+);
 function addQuote() {
-  let text = document.getElementById("newQuoteText");
-  let category = document.getElementById("newQuoteCategory");
+  let text = document.getElementById("newQuoteText").value;
+  let category = document.getElementById("newQuoteCategory").value;
 
   if (text !== "" && category !== "") {
     quote.push({ text: text, category: category });
+    document.getElementById("quoteDisplay").innerHTML = text;
+    document.getElementById("category").innerHTML = category;
   } else {
     alert("Please Enter A Quote And A category !");
   }
