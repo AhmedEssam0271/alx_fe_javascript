@@ -251,3 +251,100 @@ function manualConflictResolution(localQuote, serverQuote) {
 }
 
 // ... (rest of your existing code)
+let previousIndex = "";
+
+function showRandomQuote() {
+  let filteredQuotes = getFilteredQuotes();
+  let index = "";
+  do {
+    index = Math.floor(Math.random() * filteredQuotes.length);
+  } while (previousIndex == index);
+  previousIndex = index;
+  document.getElementById("quoteDisplay").innerHTML =
+    filteredQuotes[index].text;
+  document.getElementById("category").innerHTML =
+    filteredQuotes[index].category;
+}
+
+function getFilteredQuotes() {
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  if (selectedCategory === "all") {
+    return quotes;
+  }
+  return quotes.filter((quote) => quote.category === selectedCategory);
+}
+
+function populateCategories() {
+  const uniqueCategories = [...new Set(quotes.map((quote) => quote.category))];
+  const categoryFilter = document.getElementById("categoryFilter");
+  uniqueCategories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.text = category;
+    categoryFilter.add(option);
+  });
+}
+
+document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+
+function exportQuotes() {
+  const data = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("exportButton").addEventListener("click", exportQuotes);
+
+document.getElementById("importFile").addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const importedQuotes = JSON.parse(e.target.result);
+    quotes = quotes.concat(importedQuotes);
+    localStorage.setItem("quotes", JSON.stringify(quotes));
+    populateCategories();
+    alert("Quotes imported successfully!");
+  };
+  reader.readAsText(file);
+});
+
+function addQuotes() {
+  let text = document.getElementById("newQuoteText").value;
+  let category = document.getElementById("newQuoteCategory").value;
+  if (text !== "" && category !== "") {
+    quotes.push({ text, category });
+    document.getElementById("quoteDisplay").innerHTML = text;
+    document.getElementById("category").innerHTML = category;
+    localStorage.setItem("quotes", JSON.stringify(quotes));
+    populateCategories();
+  } else {
+    alert("Please Enter A Quote And A category!");
+  }
+}
+
+function filterQuotes() {
+  showRandomQuote();
+}
+
+window.onload = () => {
+  if (localStorage.getItem("lastQuoteIndex")) {
+    previousIndex = localStorage.getItem("lastQuoteIndex");
+    showRandomQuote();
+  }
+  const selectedCategory = localStorage.getItem("selectedCategory") || "all";
+  document.getElementById("categoryFilter").value = selectedCategory;
+  filterQuotes();
+};
+
+window.onunload = () => {
+  localStorage.setItem("lastQuoteIndex", previousIndex);
+  localStorage.setItem(
+    "selectedCategory",
+    document.getElementById("categoryFilter").value
+  );
+};
