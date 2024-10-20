@@ -284,4 +284,4 @@ window.onunload = () => {
     document.getElementById("categoryFilter").value
   );
 };
-//appendChild;
+//appendChild;textContent
