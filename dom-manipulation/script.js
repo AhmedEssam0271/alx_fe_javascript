@@ -284,3 +284,4 @@ window.onunload = () => {
     document.getElementById("categoryFilter").value
   );
 };
+//appendChild;
