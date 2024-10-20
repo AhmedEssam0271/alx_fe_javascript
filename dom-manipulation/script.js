@@ -1,4 +1,4 @@
-const quote = [
+let quotes = JSON.parse(localStorage.getItem("quotes")) || [
   {
     text: "“Life is too short to waste your time on people who don’t respect, appreciate, and value you.”",
     category: "category",
@@ -190,29 +190,60 @@ let previousIndex = "";
 function showRandomQuote() {
   let index = "";
   do {
-    index = Math.floor(Math.random() * quote.length);
+    index = Math.floor(Math.random() * quotes.length);
   } while (previousIndex == index);
   previousIndex = index;
-  console.log(index);
-  document.getElementById("quoteDisplay").innerHTML = quote[index].text;
-  document.getElementById("category").innerHTML = quote[index].category;
+  document.getElementById("quoteDisplay").innerHTML = quotes[index].text;
+  document.getElementById("category").innerHTML = quotes[index].category;
 }
+
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 
-let createAddQuoteForm = document.createElement("form");
-document.body.appendChild(createAddQuoteForm);
-document.createAddQuoteForm.appendChild(
-document.getElementById("createAddQuoteFormChilde")
-);
-function addQuote() {
+function exportQuotes() {
+  const data = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("exportButton").addEventListener("click", exportQuotes);
+
+document.getElementById("importFile").addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const importedQuotes = JSON.parse(e.target.result);
+    quotes = quotes.concat(importedQuotes);
+    localStorage.setItem("quotes", JSON.stringify(quotes));
+    alert("Quotes imported successfully!");
+  };
+  reader.readAsText(file);
+});
+
+function addQuotes() {
   let text = document.getElementById("newQuoteText").value;
   let category = document.getElementById("newQuoteCategory").value;
-
   if (text !== "" && category !== "") {
-    quote.push({ text: text, category: category });
+    quotes.push({ text, category });
     document.getElementById("quoteDisplay").innerHTML = text;
     document.getElementById("category").innerHTML = category;
+    localStorage.setItem("quotes", JSON.stringify(quotes));
   } else {
-    alert("Please Enter A Quote And A category !");
+    alert("Please Enter A Quote And A category!");
   }
 }
+
+window.onload = () => {
+  if (localStorage.getItem("lastQuoteIndex")) {
+    previousIndex = localStorage.getItem("lastQuoteIndex");
+    showRandomQuote();
+  }
+};
+
+window.onunload = () => {
+  localStorage.setItem("lastQuoteIndex", previousIndex);
+};
