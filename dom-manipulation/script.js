@@ -187,8 +187,6 @@ let quotes = JSON.parse(localStorage.getItem("quotes")) || [
 
 //what the checker wants
 //appendChild;textContent;"method", "POST", "headers", "application/json", "Content-Type" syncQuotes
-populateCategories();
-filterQuotes();
 
 // Step 1: Fetch Quotes from Server
 async function fetchQuotesFromServer() {
@@ -208,7 +206,6 @@ function updateLocalStorageWithServerData(serverQuotes) {
   quotes = combinedQuotes;
   populateCategories();
   filterQuotes();
-  notifyUser("Quotes updated from server");
   alert("Quotes synced with server!");
 }
 
@@ -250,10 +247,13 @@ function manualConflictResolution(localQuote, serverQuote) {
   );
   return userChoice ? serverQuote : localQuote;
 }
-
 // ... (rest of your existing code)
+populateCategories();
+filterQuotes();
+
 let previousIndex = "";
 
+// Show Random Quote
 function showRandomQuote() {
   let filteredQuotes = getFilteredQuotes();
   let index = "";
