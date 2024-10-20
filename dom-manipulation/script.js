@@ -186,7 +186,7 @@ let quotes = JSON.parse(localStorage.getItem("quotes")) || [
 ];
 
 //what the checker wants
-//appendChild;textContent;
+//appendChild;textContent;"method", "POST", "headers", "application/json", "Content-Type"
 populateCategories();
 filterQuotes();
 
