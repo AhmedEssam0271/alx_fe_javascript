@@ -209,6 +209,7 @@ function updateLocalStorageWithServerData(serverQuotes) {
   populateCategories();
   filterQuotes();
   notifyUser("Quotes updated from server");
+  alert("Quotes synced with server!");
 }
 
 // Conflict Resolution Strategy
